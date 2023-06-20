@@ -18,13 +18,11 @@
   padding: 10px 20px;
   border: none;
   background-color: #f8f8f8;
-  color: #333;
+  color: red;
   font-size: 16px;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-
-  /* height: 30px; */
 }
 
 .spinButton:hover {
@@ -49,16 +47,22 @@
   margin-right: 50px;
 }
 .winAmount {
-  width: 140px;
-  height: 50px;
-  background-color: red;
+  width: 170px;
+  height: 80px;
+  background-color: rgba(0, 0, 0, 0.396);
   position: absolute;
-  left: 120px;
+  left: 90px;
   top: 300px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
+  font-size: 20px;
+  color: white;
+}
+
+.somediv {
+  position: absolute;
 }
 
 .div1 {

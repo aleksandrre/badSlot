@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 function BallAnimation() {
   const [ballPosition, setBallPosition] = useState({
@@ -8,16 +8,18 @@ function BallAnimation() {
     dy: -Math.random() * 5,
     touchOnWall: 0,
     xBet: 1,
-    notTouchLosingArea: true,
+    touchLosingArea: false,
     bet: 2,
     balance: 1000,
     xBetArray: [],
-    kiti: true,
+    spininigProcess: false,
   });
+
   //სპინის გაკეთება ღილაკზე დაწკაპებით
+
   const handleSpinClick = () => {
-    if (ballPosition.kiti) {
-      spinFunction();
+    if (!ballPosition.spininigProcess) {
+      beforeSpinFunction(); //სპინის დასრულების შემდეგ ახლდება state (ბურთის პარამეტრები და ინფორმაცია თამაშზე)
     }
     requestAnimationFrame(move);
   };
@@ -31,17 +33,17 @@ function BallAnimation() {
         dy,
         touchOnWall,
         xBet,
-        notTouchLosingArea,
+        touchLosingArea,
         bet,
         balance,
         xBetArray,
-        kiti,
+        spininigProcess,
       } = prevPosition;
 
       if (y > 460 || y < 0) {
         touchOnWall += 1;
         dy *= -1;
-        // console.log("shemovida?");
+
         if (x >= 280 && x <= 480) {
           xBet *= 2;
           xBetArray = [...xBetArray, 2];
@@ -49,7 +51,8 @@ function BallAnimation() {
           xBet *= 1;
         } else {
           xBet *= 0;
-          notTouchLosingArea = false;
+          xBetArray = [...xBetArray, 0];
+          touchLosingArea = true;
         }
       }
       if (x > 1000 - 40 || x < 0) {
@@ -66,14 +69,17 @@ function BallAnimation() {
 
       x += dx;
       y += dy;
+      //კედელთან შეხებების რაოდენობის და losing area-ში მოხვედრის შემოწმება
+      if (touchOnWall < 5 && !touchLosingArea) {
+        spininigProcess = true;
 
-      if (touchOnWall < 5 && notTouchLosingArea) {
-        kiti = false;
         requestAnimationFrame(move);
       } else {
-        kiti = true;
+        //ვანახლებთ ბალანსს, სპინი სრულდება
+        spininigProcess = false;
         balance += xBet * bet;
       }
+
       return {
         x,
         y,
@@ -81,18 +87,18 @@ function BallAnimation() {
         dy,
         touchOnWall,
         xBet,
-        notTouchLosingArea,
+        touchLosingArea,
         bet,
         balance,
         xBetArray,
-        kiti,
+        spininigProcess,
       };
     });
   };
 
-  //ახალი სპინის გაკეთება (საწყის კოორდინატებზე დაბრუნება)
-  const spinFunction = () => {
-    console.log("helllow");
+  //ახალი სპინის გაკეთების ფუნქცია (საწყის კოორდინატებზე დაბრუნება)
+  const beforeSpinFunction = () => {
+    console.log("respin");
     setBallPosition((prevPosition) => {
       return {
         ...prevPosition,
@@ -102,10 +108,10 @@ function BallAnimation() {
         dy: -Math.random() * 5,
         touchOnWall: 0,
         xBet: 1,
-        notTouchLosingArea: true,
+        touchLosingArea: false,
         balance: prevPosition.balance - prevPosition.bet,
         xBetArray: [],
-        kiti: true,
+        spininigProcess: false,
       };
     });
   };
@@ -120,13 +126,13 @@ function BallAnimation() {
           key={i}
           className="spinButton"
           id={i * 2}
-          style={i * 2 === ballPosition.bet ? { backgroundColor: "blue" } : {}}
+          style={
+            i * 2 === ballPosition.bet
+              ? { backgroundColor: "orange", color: "white" }
+              : {}
+          }
           onClick={(e) => {
-            if (
-              // ballPosition.touchOnWall >= 5 ||
-              // !ballPosition.notTouchLosingArea
-              ballPosition.kiti
-            )
+            if (!ballPosition.spininigProcess)
               setBallPosition((prev) => {
                 return { ...prev, bet: parseInt(e.target.id) };
               });
@@ -144,7 +150,7 @@ function BallAnimation() {
   const winLoseDivs = () => {
     const divs = [];
 
-    for (let i = 1; i < 10; i++) {
+    for (let i = 1; i < 9; i++) {
       divs.push(<div key={i} className={`div${i}`}></div>);
     }
 
@@ -167,9 +173,9 @@ function BallAnimation() {
   const winOrLoseText = useMemo(() => {
     return (
       <div>
-        {ballPosition.touchOnWall >= 5 && ballPosition.notTouchLosingArea
+        {ballPosition.touchOnWall >= 5 && !ballPosition.touchLosingArea
           ? `You win ${ballPosition.xBet * ballPosition.bet}`
-          : !ballPosition.notTouchLosingArea
+          : ballPosition.touchLosingArea
           ? "you lose"
           : ""}
       </div>
@@ -213,10 +219,7 @@ function BallAnimation() {
         ></div>
       </div>
       <div className="actionButtons">
-        <div className="balanceDiv">
-          {/* <h1>balance</h1> */}
-          {ballPosition.balance} Gel
-        </div>
+        <div className="balanceDiv">{ballPosition.balance} Gel</div>
         <div className="spinButton" onClick={handleSpinClick}>
           spin
         </div>
