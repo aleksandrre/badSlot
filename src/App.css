@@ -1,0 +1,161 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  background-color: green;
+
+  height: 100vh;
+}
+.main {
+  width: 1000px;
+  height: 500px;
+  background-color: black;
+  position: relative;
+}
+.spinButton {
+  padding: 10px 20px;
+  border: none;
+  background-color: #f8f8f8;
+  color: #333;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  /* height: 30px; */
+}
+
+.spinButton:hover {
+  background-color: #ff4081;
+  color: #fff;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 5px;
+}
+.balanceDiv {
+  width: 100px;
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #333333;
+  font-size: 18px;
+  margin-right: 50px;
+}
+.winAmount {
+  width: 140px;
+  height: 50px;
+  background-color: red;
+  position: absolute;
+  left: 120px;
+  top: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.div1 {
+  width: 200px;
+  height: 3px;
+  background-color: orange;
+  left: 300px;
+  position: absolute;
+}
+.div2 {
+  width: 200px;
+  height: 3px;
+  background-color: orange;
+  left: 300px;
+  top: 498px;
+  position: absolute;
+}
+.div3 {
+  width: 200px;
+  height: 3px;
+  background-color: red;
+  left: 0;
+  top: 0;
+  position: absolute;
+}
+.div4 {
+  width: 200px;
+  height: 3px;
+  background-color: red;
+  left: 0;
+  top: 498px;
+  position: absolute;
+}
+.div5 {
+  width: 100px;
+  height: 3px;
+  background-color: red;
+  left: 900px;
+  top: 0;
+  position: absolute;
+}
+.div6 {
+  width: 100px;
+  height: 3px;
+  background-color: red;
+  left: 900px;
+  top: 498px;
+  position: absolute;
+}
+.div7 {
+  width: 3px;
+  height: 200px;
+  background-color: blue;
+  left: 0px;
+  top: 150px;
+  position: absolute;
+}
+.div8 {
+  width: 3px;
+  height: 200px;
+  background-color: blue;
+  left: 998px;
+  top: 150px;
+  position: absolute;
+}
+
+.instructionDiv {
+  position: absolute;
+  right: 40px;
+  top: 240px;
+  width: 200px;
+  height: 150px;
+  background-color: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+.instructionDivDivs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: green;
+}
+.instructionDiv1 {
+  width: 150px;
+  height: 3px;
+  background-color: orange;
+}
+.instructionDiv2 {
+  width: 150px;
+  height: 3px;
+  background-color: blue;
+}
+.instructionDiv3 {
+  width: 150px;
+  height: 3px;
+  background-color: red;
+}
