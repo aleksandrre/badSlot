@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 function BallAnimation() {
+  let V = 5;
+  let dx = Math.random() * 5;
   const [ballPosition, setBallPosition] = useState({
     x: 0,
     y: 460,
-    dx: Math.random() * 5,
-    dy: -Math.random() * 5,
+    dx: dx,
+    dy: -Math.sqrt(V * V - dx * dx),
     touchOnWall: 0,
     xBet: 1,
     touchLosingArea: false,
@@ -17,7 +19,17 @@ function BallAnimation() {
 
   //სპინის გაკეთება ღილაკზე დაწკაპებით
 
+  // console.log(ballPosition.dx);
+  // console.log(ballPosition.dy);
+  // console.log(
+  //   ballPosition.dx * ballPosition.dx + ballPosition.dy * ballPosition.dy
+  // );
   const handleSpinClick = () => {
+    console.log(
+      ballPosition.dx * ballPosition.dx + ballPosition.dy * ballPosition.dy
+    );
+    console.log(ballPosition.dy);
+    console.log(ballPosition.dx);
     if (!ballPosition.spininigProcess) {
       beforeSpinFunction(); //სპინის დასრულების შემდეგ ახლდება state (ბურთის პარამეტრები და ინფორმაცია თამაშზე)
     }
@@ -104,8 +116,8 @@ function BallAnimation() {
         ...prevPosition,
         x: 0,
         y: 460,
-        dx: Math.random() * 5,
-        dy: -Math.random() * 5,
+        dx: dx,
+        dy: -Math.sqrt(V * V - dx * dx),
         touchOnWall: 0,
         xBet: 1,
         touchLosingArea: false,
