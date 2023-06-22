@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 function BallAnimation() {
-  let V = 5;
-  let dx = Math.random() * 5;
+  let V = 10;
+  let dx = Math.random() * 10;
   const [ballPosition, setBallPosition] = useState({
     x: 0,
     y: 460,
