@@ -12,6 +12,8 @@
   width: 1000px;
   height: 500px;
   background-color: black;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
   position: relative;
 }
 .spinButton {
@@ -27,6 +29,27 @@
 
 .spinButton:hover {
   background-color: #ff4081;
+  color: #fff;
+}
+.fifty-fiftyDiv {
+  position: absolute;
+  margin-left: 580px;
+  display: flex;
+  gap: 20px;
+}
+.X2orTake {
+  padding: 10px 20px;
+  border: none;
+  background-color: #f8f8f8;
+  color: red;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.X2orTake:hover {
+  background-color: red;
   color: #fff;
 }
 
@@ -162,4 +185,46 @@
   width: 150px;
   height: 3px;
   background-color: red;
+}
+
+.cannonimg {
+  width: 100px;
+  height: 50px;
+  background-color: red;
+}
+.doubleOrLoseparentparent {
+  position: absolute;
+  right: 40px;
+  top: 500px;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.doubleOrLoseparent {
+  display: flex;
+  gap: 20px;
+}
+
+.doubleOrLose1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 40px;
+  background-color: red;
+  color: black;
+  font-size: 20px;
+}
+.doubleOrLose2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 40px;
+  background-color: black;
+  color: red;
+  font-size: 20px;
 }

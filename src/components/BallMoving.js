@@ -1,8 +1,17 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 function BallAnimation() {
-  let V = 10;
-  let dx = Math.random() * 10;
+  let V = 14;
+  let dx = Math.random() * 14;
+  let randomNumber = Math.random();
+  const reference = useRef();
+
   const [ballPosition, setBallPosition] = useState({
     x: 0,
     y: 460,
@@ -15,28 +24,37 @@ function BallAnimation() {
     balance: 1000,
     xBetArray: [],
     spininigProcess: false,
+    doubleORlose: false,
+    redORblackWinowLose: false,
+    spinCanLoading: true,
   });
 
   //სპინის გაკეთება ღილაკზე დაწკაპებით
-
-  // console.log(ballPosition.dx);
-  // console.log(ballPosition.dy);
-  // console.log(
-  //   ballPosition.dx * ballPosition.dx + ballPosition.dy * ballPosition.dy
-  // );
+  console.log(ballPosition);
   const handleSpinClick = () => {
-    console.log(
-      ballPosition.dx * ballPosition.dx + ballPosition.dy * ballPosition.dy
-    );
-    console.log(ballPosition.dy);
-    console.log(ballPosition.dx);
-    if (!ballPosition.spininigProcess) {
-      beforeSpinFunction(); //სპინის დასრულების შემდეგ ახლდება state (ბურთის პარამეტრები და ინფორმაცია თამაშზე)
+    console.log("2");
+
+    if (ballPosition.spinCanLoading || ballPosition.touchLosingArea) {
+      if (!ballPosition.spininigProcess) {
+        ballPosition.balance = ballPosition.balance - ballPosition.bet;
+        // setBallPosition((prev) => {
+        //   return {
+        //     ...prev,
+        //     balance: ballPosition.balance + ballPosition.xBet * ballPosition.bet,
+        //   };
+        // });
+
+        beforeSpinFunction();
+        console.log("3"); //სპინის დასრულების შემდეგ ახლდება state (ბურთის პარამეტრები და ინფორმაცია თამაშზე)
+      }
+      console.log("4");
+      ballPosition.spinCanLoading = false;
+      requestAnimationFrame(move);
     }
-    requestAnimationFrame(move);
   };
   //ბურთის მოძრაობის ლოგიკა
   const move = () => {
+    console.log("6");
     setBallPosition((prevPosition) => {
       let {
         x,
@@ -86,10 +104,8 @@ function BallAnimation() {
         spininigProcess = true;
 
         requestAnimationFrame(move);
-      } else {
-        //ვანახლებთ ბალანსს, სპინი სრულდება
+      } else if (touchLosingArea) {
         spininigProcess = false;
-        balance += xBet * bet;
       }
 
       return {
@@ -110,7 +126,7 @@ function BallAnimation() {
 
   //ახალი სპინის გაკეთების ფუნქცია (საწყის კოორდინატებზე დაბრუნება)
   const beforeSpinFunction = () => {
-    console.log("respin");
+    console.log("beforeSpinFunction");
     setBallPosition((prevPosition) => {
       return {
         ...prevPosition,
@@ -121,15 +137,15 @@ function BallAnimation() {
         touchOnWall: 0,
         xBet: 1,
         touchLosingArea: false,
-        balance: prevPosition.balance - prevPosition.bet,
         xBetArray: [],
         spininigProcess: false,
+        doubleORlose: false,
       };
     });
   };
 
   // ბეთის აწევა დაწევის ღილაკები
-  const betDivs = () => {
+  const betDivs = useMemo(() => {
     const divs = [];
 
     for (let i = 1; i < 5; i++) {
@@ -144,9 +160,16 @@ function BallAnimation() {
               : {}
           }
           onClick={(e) => {
+            console.log(ballPosition.touchLosingArea);
             if (!ballPosition.spininigProcess)
               setBallPosition((prev) => {
-                return { ...prev, bet: parseInt(e.target.id) };
+                return {
+                  ...prev,
+                  bet: parseInt(e.target.id),
+                  xBetArray: [],
+                  // touchLosingArea: false,
+                  spinCanLoading: true,
+                };
               });
           }}
         >
@@ -156,10 +179,10 @@ function BallAnimation() {
     }
 
     return divs;
-  };
+  }, [ballPosition.bet, ballPosition.spininigProcess]);
 
   // მოგება-წაგების ინტერვალები
-  const winLoseDivs = () => {
+  const winLoseDivs = useMemo(() => {
     const divs = [];
 
     for (let i = 1; i < 9; i++) {
@@ -167,7 +190,7 @@ function BallAnimation() {
     }
 
     return divs;
-  };
+  }, []);
 
   // კოეფიციენტების გადამრავლება ლაივში
   const winingProcessText = useMemo(() => {
@@ -179,7 +202,7 @@ function BallAnimation() {
           `=${ballPosition.xBet * ballPosition.bet}`}
       </div>
     );
-  }, [ballPosition.xBet]);
+  }, [ballPosition.xBet, ballPosition.bet]);
 
   //მოგება წაგების ტექსტი ყოველი სპინის შემდეგ
   const winOrLoseText = useMemo(() => {
@@ -192,10 +215,100 @@ function BallAnimation() {
           : ""}
       </div>
     );
-  }, [ballPosition.touchOnWall]);
+  }, [ballPosition.touchOnWall, ballPosition.xBet, ballPosition.bet]);
+
+  //ფულის გადაყრა სუფულეში
+
+  const takeWin = () => {
+    console.log("logggg");
+    setBallPosition((prev) => {
+      return {
+        ...prev,
+        balance: ballPosition.balance + ballPosition.xBet * ballPosition.bet,
+        spinCanLoading: true,
+      };
+    });
+    beforeSpinFunction();
+  };
+  //რისკი გაორმაგების მცდელობა
+  const doubleWinTry = () => {
+    setBallPosition((prev) => {
+      return {
+        ...prev,
+        doubleORlose: true,
+      };
+    });
+  };
+
+  //გაორმაგების მცდელობის უარყოფითად დასრულების პროცესის აღწერა
+  const appearDisappearText = () => {
+    console.log("looogii");
+    reference.current.style.opacity = 1;
+    setTimeout(() => {
+      reference.current.style.opacity = 0;
+      beforeSpinFunction();
+    }, 1000);
+    setBallPosition((prev) => {
+      return {
+        ...prev,
+        xBet: ballPosition.xBet * 0,
+        xBetArray: [...ballPosition.xBetArray, 0],
+        redORblackWinowLose: false,
+        spinCanLoading: true,
+      };
+    });
+  };
+  //გაორმაგების მცდელობის დადებითად დასრულების პროცესის აღწერა
+  const appearDisappearText2 = () => {
+    reference.current.style.opacity = 1;
+    setTimeout(() => {
+      reference.current.style.opacity = 0;
+    }, 1000);
+    setBallPosition((prev) => {
+      return {
+        ...prev,
+        xBet: ballPosition.xBet * 2,
+        xBetArray: [...ballPosition.xBetArray, 2],
+        redORblackWinowLose: true,
+      };
+    });
+  };
+
+  //პირობა იმის თუ რაშემთხვევაში გაორმაგდეს.
+  const blackORred1 = () => {
+    if (randomNumber < 0.5) {
+      appearDisappearText2();
+    } else {
+      appearDisappearText();
+    }
+  };
+  const blackORred2 = () => {
+    if (randomNumber > 0.5) {
+      appearDisappearText2();
+    } else {
+      appearDisappearText();
+    }
+  };
 
   return (
     <div className="body">
+      <div
+        className="doubleOrLoseparentparent"
+        style={{ display: ballPosition.doubleORlose ? "flex" : "none" }}
+      >
+        <div className="doubleOrLoseparent">
+          <div className="doubleOrLose1" onClick={blackORred1}>
+            X2
+          </div>
+          <div className="doubleOrLose2" onClick={blackORred2}>
+            X2
+          </div>
+        </div>
+        <h1 style={{ opacity: 0 }} ref={reference}>
+          {ballPosition.redORblackWinowLose ? "You win " : "You lost"}
+        </h1>
+      </div>
+
       <div className="instructionDiv">
         <div className="instructionDivDivs">
           x2
@@ -216,7 +329,7 @@ function BallAnimation() {
       </div>
 
       <div className="main">
-        {winLoseDivs()}
+        {winLoseDivs}
         <div
           className="ball"
           style={{
@@ -235,7 +348,33 @@ function BallAnimation() {
         <div className="spinButton" onClick={handleSpinClick}>
           spin
         </div>
-        {betDivs()}
+        {betDivs}
+        <div className="fifty-fiftyDiv">
+          <div
+            className="X2orTake"
+            style={{
+              display:
+                ballPosition.touchLosingArea || ballPosition.touchOnWall < 5
+                  ? "none"
+                  : "flex",
+            }}
+            onClick={() => takeWin()}
+          >
+            Take
+          </div>
+          <div
+            className="X2orTake"
+            style={{
+              display:
+                ballPosition.touchLosingArea || ballPosition.touchOnWall < 5
+                  ? "none"
+                  : "flex",
+            }}
+            onClick={doubleWinTry}
+          >
+            X2
+          </div>
+        </div>
       </div>
     </div>
   );
